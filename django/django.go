@@ -106,7 +106,13 @@ func copyProjectFiles(con *ssh.Client, project *config.Project, user string) {
 	term.RunLongCommand(con, cmd)
 
 	ex := project.MediaDirLocal
-	cmd = fmt.Sprintf("rsync -avzh --exclude %s -e ssh %s %s@%s:%s", ex, project.ProjectDirLocal, user, project.Server.Ip, project.ProjectDirServer)
+
+	cmd = "rsync -avzh "
+	for _, path := range project.Exclude {
+		cmd += fmt.Sprintf(" --exclude %s", path)
+	}
+
+	cmd += fmt.Sprintf(" --exclude %s -e ssh %s %s@%s:%s", ex, project.ProjectDirLocal, user, project.Server.Ip, project.ProjectDirServer)
 	fmt.Println(cmd)
 	funcs.RunCommandSh(cmd)
 }

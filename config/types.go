@@ -106,6 +106,7 @@ type PostfixEmail struct {
 type Project struct {
 	Id                  int      `json:"id"`
 	Executables         []string `json:"executables"`
+	Exclude             []string `json:"exclude"`
 	Type                string   `json:"type"`
 	Name                string   `json:"name"`
 	Domain              string   `json:"domain"`
