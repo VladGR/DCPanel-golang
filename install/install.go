@@ -21,8 +21,7 @@ func Start() {
 
 	con := term.GetConnection(server.Ip, "root")
 
-	cfg := config.GetConfig()
-	CreateUser(con, server, cfg.MainUser)
+	CreateUser(con, server)
 	Base(con)
 	DropCache(con, server)
 
@@ -59,7 +58,7 @@ func Start() {
 	}
 
 	if funcs.IsSliceContainsString(server.Installs, "supervisor") {
-		Supervisor(con, server, cfg.MainUser)
+		Supervisor(con, server)
 	}
 
 	if funcs.IsSliceContainsString(server.Installs, "squid") {

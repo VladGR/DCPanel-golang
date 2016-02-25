@@ -31,8 +31,6 @@ func GetConfig() *Config {
 	c := new(Config)
 	c.LocalLinuxUser = getLocalLinuxUsername()
 	c.Localhost = getLocalhost()
-	// main user on remote servers is the same as local
-	c.MainUser = c.LocalLinuxUser
 	return c
 }
 
@@ -169,7 +167,7 @@ func getMySQLDb(serverId int) *Db {
 func getPostgreSQLDb(serverId int) *Db {
 	for _, x := range getDatabases() {
 		if x.ServerId == serverId && x.Type == "S" && x.TypeDb == "P" {
-			x.User = getPostgreSQLRootUser(x.Id)
+			x.User = getPostgreSQLPostgresUser(x.Id)
 			return x
 		}
 	}
@@ -185,13 +183,13 @@ func getMySQLRootUser(dbId int) *UserItem {
 	panic("MySQL root user not found for server.")
 }
 
-func getPostgreSQLRootUser(dbId int) *UserItem {
+func getPostgreSQLPostgresUser(dbId int) *UserItem {
 	for _, x := range getUsers() {
-		if x.Type == "db" && x.DbId == dbId && x.Name == "root" {
+		if x.Type == "db" && x.DbId == dbId && x.Name == "postgres" {
 			return getUserItem(x.Id)
 		}
 	}
-	panic("PostgreSQL root user not found for server.")
+	panic("PostgreSQL postgres user not found for server.")
 }
 
 func getPostfix(serverId int) *Postfix {

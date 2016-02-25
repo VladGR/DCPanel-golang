@@ -25,4 +25,5 @@ func PostgreSQL(con *ssh.Client, server *config.Server) {
 	term.RunLongCommand(con, cmd)
 
 	// TODO create password
+
 }

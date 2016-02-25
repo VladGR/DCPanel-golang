@@ -22,10 +22,8 @@ func Deploy() {
 		return
 	}
 
-	cfg := config.GetConfig()
-
 	conr := term.GetConnection(project.Server.Ip, "root")
-	conu := term.GetConnection(project.Server.Ip, cfg.LocalLinuxUser)
+	conu := term.GetConnection(project.Server.Ip, project.Server.MainUser)
 
 	fmt.Printf("You are going to deploy %q to server %q %s.\nCopy media files? y/n> ", project.Name, project.Server.Code, project.Server.Ip)
 
@@ -38,7 +36,7 @@ func Deploy() {
 
 	prepareLocalFiles(project)
 	makeExecutables(project)
-	copyProjectFiles(conu, project, cfg.LocalLinuxUser)
+	copyProjectFiles(conu, project)
 
 	// create and install venv after project files have been copied
 	// need requirements/production.txt file
@@ -48,14 +46,14 @@ func Deploy() {
 	}
 
 	if project.IsStaticDirSeparate {
-		copyStaticFiles(conu, project, cfg.LocalLinuxUser)
+		copyStaticFiles(conu, project)
 	}
 
 	if doCopyMedia == "y" {
-		copyMediaFiles(conu, project, cfg.LocalLinuxUser)
+		copyMediaFiles(conu, project)
 	}
 
-	applyUserRights(conr, project, cfg.LocalLinuxUser)
+	applyUserRights(conr, project)
 	processNginx(conr, project)
 	processSupervisor(conr, project)
 	touchReload(conu, project)
@@ -99,7 +97,7 @@ func installVirtualEnv(con *ssh.Client, project *config.Project) {
 }
 
 // copy project files excluding media directory
-func copyProjectFiles(con *ssh.Client, project *config.Project, user string) {
+func copyProjectFiles(con *ssh.Client, project *config.Project) {
 	fmt.Println("Copying project files...")
 
 	cmd := fmt.Sprintf("mkdir -p %s", project.ProjectDirServer)
@@ -112,13 +110,13 @@ func copyProjectFiles(con *ssh.Client, project *config.Project, user string) {
 		cmd += fmt.Sprintf(" --exclude %s", path)
 	}
 
-	cmd += fmt.Sprintf(" --exclude %s -e ssh %s %s@%s:%s", ex, project.ProjectDirLocal, user, project.Server.Ip, project.ProjectDirServer)
+	cmd += fmt.Sprintf(" --exclude %s -e ssh %s %s@%s:%s", ex, project.ProjectDirLocal, project.Server.MainUser, project.Server.Ip, project.ProjectDirServer)
 	fmt.Println(cmd)
 	funcs.RunCommandSh(cmd)
 }
 
 // copy static files excluding media directory if media inside static
-func copyStaticFiles(con *ssh.Client, project *config.Project, user string) {
+func copyStaticFiles(con *ssh.Client, project *config.Project) {
 	fmt.Println("Copying static files...")
 
 	cmd := fmt.Sprintf("mkdir -p %s", project.StaticDirServer)
@@ -134,19 +132,19 @@ func copyStaticFiles(con *ssh.Client, project *config.Project, user string) {
 	fmt.Println(project.StaticDirLocal)
 	pathLocal := project.ProjectDirLocal + strings.TrimLeft(project.StaticDirLocal, "/")
 
-	cmd += fmt.Sprintf(" -e ssh %s %s@%s:%s", pathLocal, user, project.Server.Ip, project.StaticDirServer)
+	cmd += fmt.Sprintf(" -e ssh %s %s@%s:%s", pathLocal, project.Server.MainUser, project.Server.Ip, project.StaticDirServer)
 	fmt.Println(cmd)
 	funcs.RunCommandSh(cmd)
 }
 
-func copyMediaFiles(con *ssh.Client, project *config.Project, user string) {
+func copyMediaFiles(con *ssh.Client, project *config.Project) {
 	fmt.Println("Copying media files...")
 	cmd := fmt.Sprintf("mkdir -p %s", project.MediaDirServer)
 	term.RunLongCommand(con, cmd)
 
 	localPath := project.ProjectDirLocal + strings.TrimLeft(project.MediaDirLocal, "/")
 
-	cmd = fmt.Sprintf("rsync -avzh -e ssh %s %s@%s:%s", localPath, user, project.Server.Ip, project.MediaDirServer)
+	cmd = fmt.Sprintf("rsync -avzh -e ssh %s %s@%s:%s", localPath, project.Server.MainUser, project.Server.Ip, project.MediaDirServer)
 	fmt.Println(cmd)
 	funcs.RunCommandSh(cmd)
 }
@@ -157,11 +155,11 @@ func get1stLevelDir(somePath string) string {
 	return re.FindString(somePath)
 }
 
-func applyUserRights(con *ssh.Client, project *config.Project, user string) {
-	cmd := fmt.Sprintf("chown -R %s: %s", user, project.ProjectDirServer)
+func applyUserRights(con *ssh.Client, project *config.Project) {
+	cmd := fmt.Sprintf("chown -R %s: %s", project.Server.MainUser, project.ProjectDirServer)
 	term.RunLongCommand(con, cmd)
 
-	cmd = fmt.Sprintf("chown -R %s:%s %s", user, project.Server.NginxName, project.StaticDirServer)
+	cmd = fmt.Sprintf("chown -R %s:%s %s", project.Server.MainUser, project.Server.NginxName, project.StaticDirServer)
 	term.RunLongCommand(con, cmd)
 
 	if project.IsStaticDirSeparate {

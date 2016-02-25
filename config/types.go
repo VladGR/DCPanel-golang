@@ -7,6 +7,7 @@ type Server struct {
 	Code       string `json:"code"`
 	Type       string `json:"type"`
 	Ip         string `json:"main_ip"`
+	MainUser   string `json:"server_main_user"`
 	NginxName  string `json:"nginx_name"`
 	MySQL      *Db
 	PostgreSQL *Db
@@ -43,7 +44,6 @@ type Install struct {
 type Config struct {
 	LocalLinuxUser string
 	Localhost      *Server
-	MainUser       string
 }
 
 type Databases []*Db

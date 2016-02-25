@@ -12,7 +12,8 @@ import (
 )
 
 // Main User
-func CreateUser(con *ssh.Client, server *config.Server, name string) {
+func CreateUser(con *ssh.Client, server *config.Server) {
+	name := server.MainUser
 
 	fmt.Printf("Creating user %q ...\n", name)
 
