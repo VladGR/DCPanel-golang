@@ -17,6 +17,7 @@ func CreateUser(con *ssh.Client, server *config.Server) {
 
 	fmt.Printf("Creating user %q ...\n", name)
 
+	term.RunLongCommand(con, "apt-get install sudo")
 	term.RunLongCommand(con, fmt.Sprintf("mkdir -p /home/%s", name))
 
 	// ignore error if user exists
