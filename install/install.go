@@ -25,53 +25,53 @@ func Start() {
 	Base(con)
 	DropCache(con, server)
 
-	if funcs.IsSliceContainsString(server.Installs, "iptables") {
-		IPTables(con, server)
-	}
+	// if funcs.IsSliceContainsString(server.Installs, "iptables") {
+	// 	IPTables(con, server)
+	// }
 
-	if funcs.IsSliceContainsString(server.Installs, "bash") {
-		Bash(con, server)
-	}
+	// if funcs.IsSliceContainsString(server.Installs, "bash") {
+	// 	Bash(con, server)
+	// }
 
-	if funcs.IsSliceContainsString(server.Installs, "python2") {
-		Python2(con)
-	}
+	// if funcs.IsSliceContainsString(server.Installs, "python2") {
+	// 	Python2(con)
+	// }
 
-	if funcs.IsSliceContainsString(server.Installs, "python3") {
-		Python3(con)
-	}
+	// if funcs.IsSliceContainsString(server.Installs, "python3") {
+	// 	Python3(con)
+	// }
 
-	if funcs.IsSliceContainsString(server.Installs, "nginx") {
-		Nginx(con, server)
-	}
+	// if funcs.IsSliceContainsString(server.Installs, "nginx") {
+	// 	Nginx(con, server)
+	// }
 
-	if funcs.IsSliceContainsString(server.Installs, "redis") {
-		Redis(con)
-	}
+	// if funcs.IsSliceContainsString(server.Installs, "redis") {
+	// 	Redis(con)
+	// }
 
 	if funcs.IsSliceContainsString(server.Installs, "postgresql") {
 		PostgreSQL(con, server)
 	}
 
-	if funcs.IsSliceContainsString(server.Installs, "mysql") {
-		MySQL(con, server)
-	}
+	// if funcs.IsSliceContainsString(server.Installs, "mysql") {
+	// 	MySQL(con, server)
+	// }
 
-	if funcs.IsSliceContainsString(server.Installs, "supervisor") {
-		Supervisor(con, server)
-	}
+	// if funcs.IsSliceContainsString(server.Installs, "supervisor") {
+	// 	Supervisor(con, server)
+	// }
 
-	if funcs.IsSliceContainsString(server.Installs, "squid") {
-		Squid(con, server)
-	}
+	// if funcs.IsSliceContainsString(server.Installs, "squid") {
+	// 	Squid(con, server)
+	// }
 
-	if funcs.IsSliceContainsString(server.Installs, "postfix") {
-		Postfix(con, server)
-	}
+	// if funcs.IsSliceContainsString(server.Installs, "postfix") {
+	// 	Postfix(con, server)
+	// }
 
-	if funcs.IsSliceContainsString(server.Installs, "php") {
-		PHP(con, server)
-	}
+	// if funcs.IsSliceContainsString(server.Installs, "php") {
+	// 	PHP(con, server)
+	// }
 
 	fmt.Println("Installation complete!!!")
 }

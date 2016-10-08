@@ -24,6 +24,15 @@ func PostgreSQL(con *ssh.Client, server *config.Server) {
 	cmd = fmt.Sprintf("chown postgres: %s", pgHBA)
 	term.RunLongCommand(con, cmd)
 
-	// TODO create password
+	cmd = "cd /tmp && "
+	cmd += fmt.Sprintf("cd /tmp && sudo -u postgres psql -U postgres -d postgres -c \"alter user postgres with password '%s';\"", server.PostgreSQL.User.Password)
+	cmd += " && cd /root "
+	term.RunLongCommand(con, cmd)
+
+	// Access from any IPs
+	cmd = fmt.Sprintf("echo \"listen_addresses = '*'\" >> /etc/postgresql/%s/main/postgresql.conf", server.PostgreSQL.Version)
+	term.RunLongCommand(con, cmd)
+
+	term.RunLongCommand(con, "systemctl restart postgresql")
 
 }
